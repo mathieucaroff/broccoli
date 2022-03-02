@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>Broccoli language parser testing</title>
+    <style>
+        .bodyPre {
+            font-size: x-large;
+        }
+    </style>
+</head>
+
+<body>
+    <pre class="bodyPre">*waiting for test result...*</pre>
+    <script type="module">
+        import { default as nearley } from "nearley"
+
+        import broccoliTestGrammar from "./testGrammar.ne"
+        import { success, failure, Case, testEngine } from "./lib/languageTestEngine"
+
+        let status = testEngine(
+            [
+                success("iidentifier89_", { kind: "identifier", name: "identifier89_"}),
+                success('s"a"', {kind: "string", value: "a"}),
+                success("n98", {kind: "number", value: 98 }),
+                success("o+8", {kind: "operation", operator: "+", target: { kind: "number", value: 8 } }),
+                success("o<=18", {kind: "operation", operator: "<=", target: { kind: "number", value: 18 } }),
+                success("c{}", {kind: "codeblock", program: [] }),
+                success("c{a}", {kind: "codeblock", program: [{kind: "identifier", name: "a" }] }),
+                success("g()", {kind: "group", program: [] }),
+                success("g(a)", {kind: "group", program: [{kind: "identifier", name: "a" }] }),
+                success("p", []),
+                success("pa", [{kind: "identifier", name: "a" }]),
+                success("pa b c", [{kind: "identifier", name: "a" }, {kind: "identifier", name: "b" }, {kind: "identifier", name: "c" }]),
+                success("eidentifier89_", { kind: "identifier", name: "identifier89_"}),
+                success('e"a"', {kind: "string", value: "a"}),
+                success("e98", {kind: "number", value: 98 }),
+                success("e+8", {kind: "operation", operator: "+", target: { kind: "number", value: 8 } }),
+                success("e<=18", {kind: "operation", operator: "<=", target: { kind: "number", value: 18 } }),
+                success("e{}", {kind: "codeblock", program: [] }),
+                success("e()", {kind: "group", program: [] }),
+                failure("e("),
+                failure("e)"),
+                failure("e{"),
+                failure("e}"),
+                failure('e"'),
+                failure("e[]"),
+            ],
+            () => new nearley.Parser(broccoliTestGrammar),
+        )
+
+        let bodyPre = document.getElementsByClassName("bodyPre")[0]
+        bodyPre.innerText = status
+    </script>
+</body>
+
+</html>

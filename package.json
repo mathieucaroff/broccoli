@@ -1,0 +1,16 @@
+{
+  "name": "broccoli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "nearley": "^2.20.1",
+    "typescript": "^4.6.2"
+  },
+  "devDependencies": {
+    "@parcel/transformer-yaml": "^2.3.2",
+    "@types/nearley": "^2.11.2",
+    "parcel": "^2.3.2",
+    "parcel-transformer-nearley": "^1.0.4"
+  }
+}

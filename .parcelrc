@@ -1,0 +1,7 @@
+{
+  "extends": "@parcel/config-default",
+  "transformers": {
+    "*.ne": ["parcel-transformer-nearley"],
+    "*.yaml": ["@parcel/transformer-yaml"]
+  }
+}
