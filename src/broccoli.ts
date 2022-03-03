@@ -49,10 +49,34 @@ export let predefinedFrame: BroccoliFrame = {
         },
         true: { kind: "boolean", value: true },
         false: { kind: "boolean", value: false },
+        stdin: {
+            kind: "native",
+            value: {
+                data: {
+                    read: {
+                        kind: "nativefunction",
+                        value: (rt, frame) => {
+                            let textArray: string[] = []
+                            let chunk = rt.reader.read(1000)
+                            textArray.push(chunk)
+                            while (chunk.length === 1000) {
+                                chunk = rt.reader.read(1000)
+                                textArray.push(chunk)
+                            }
+                            rt.stack.push({ kind: "string", value: textArray.join("") })
+                        },
+                    },
+                },
+            },
+        },
         output: {
             kind: "nativefunction",
             value: (rt, frame) => {
-                rt.writer.write(rt.stack.pop()!.value.toString())
+                let entry = rt.stack.pop()!
+                if (!isScalar(entry)) {
+                    throw new TypeError(`Expected a scalar but got a ${entry.kind}`)
+                }
+                rt.writer.write(entry.value.toString())
             },
         },
         input: {
@@ -170,9 +194,16 @@ function runExpression(
     frame: BroccoliFrame,
 ) {
     let { stack } = runtime
+    let entry: BroccoliValue
     switch (expression.kind) {
         case "access":
-            stack.push(stack.pop()![expression.name])
+            let previous = stack.pop()!
+            if (previous.kind === "native") {
+                entry = previous.value.data[expression.name]
+                runEntry(entry, runtime, frame)
+            } else {
+                throw new Error("unhandled access case")
+            }
             break
         case "assignment":
             frame.data[expression.target] = stack.pop()!
@@ -185,14 +216,8 @@ function runExpression(
             break
         case "identifier":
             let { name } = expression
-            let entry = frameLookup(frame, name, `unrecognized identifier ${name}`)
-            if (entry.kind === "function") {
-                runProgram(entry.value, runtime, frame, true)
-            } else if (entry.kind === "nativefunction") {
-                entry.value(runtime, frame)
-            } else {
-                stack.push(entry)
-            }
+            entry = frameLookup(frame, name, `unrecognized identifier ${name}`)
+            runEntry(entry, runtime, frame)
             break
         case "operation":
             let operator = operatorMap[expression.operator]
@@ -201,6 +226,16 @@ function runExpression(
             let right = stack.pop()!
             stack.push(operator(left, right))
             break
+    }
+}
+
+function runEntry(entry: BroccoliValue, runtime: BroccoliRuntime, frame: BroccoliFrame) {
+    if (entry.kind === "function") {
+        runProgram(entry.value, runtime, frame, true)
+    } else if (entry.kind === "nativefunction") {
+        entry.value(runtime, frame)
+    } else {
+        runtime.stack.push(entry)
     }
 }
 
