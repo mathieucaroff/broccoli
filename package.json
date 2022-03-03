@@ -1,8 +1,13 @@
 {
   "name": "broccoli",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "license": "NTP",
+  "scripts": {
+      "check": "tsc --noEmit",
+      "checkwatch": "tsc --noEmit --watch",
+      "build": "parcel build src/broccoli.html --public-url broccoli.d",
+      "serve": "parcel src/broccoli.html"
+  },
   "dependencies": {
     "nearley": "^2.20.1"
   },
