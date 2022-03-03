@@ -1,0 +1,10 @@
+h1, h2, p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 400;
+}
+textarea {
+    width: calc( 100% - 1em );
+}
+html, textarea {
+    font-size: 130%;
+}

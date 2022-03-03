@@ -2,7 +2,7 @@ braced[X] -> "{" $X "}"
 parenthesized[X] -> "(" $X ")"
 bracketed[X] -> "[" $X "]"
 
-main -> program
+main -> program {% ([program]) => program %}
 
 program -> (expression (__ expression):*):? {% ([content]) => {
     if (content === null) return []
@@ -16,19 +16,19 @@ identifier -> [A-Za-z_] [0-9A-Za-z_]:* {% ([first, rest]) => ({ kind: "identifie
 
 access -> "." identifier {% ([, { name }]) => ({ kind: "access", name }) %}
 
-string -> "\"" string_content:* "\"" {% ([, value]) => ({ kind: "string", value: value.join("") }) %}
+string -> "\"" string_content:* "\"" {% ([, value]) => ({ kind: "litteral", value: { kind: "string", value: value.join("") }}) %}
 
 string_content -> [^"\n\\] | "\\" .
 
-number -> [1-9] [0-9]:* {% (value) => ({ kind: "number", value: +value.join("") }) %}
+number -> [1-9] [0-9]:* {% (value) => ({ kind: "litteral", value: { kind: "number", value: +value.join("") }}) %}
 
 operation -> operator _ expression {% ([[operator], , target]) => ({ kind: "operation", operator, target }) %}
 
-operator -> "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
+operator -> "==" | "!=" | "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
 
 assignment -> "=" _ identifier {% ([, , { name }]) => ({ kind: "assignment", target: name }) %}
 
-codeblock -> braced[_ program _] {% ([[, [, program]]]) => ({ kind: "codeblock", program }) %}
+codeblock -> braced[_ program _] {% ([[, [, program]]]) => ({ kind: "litteral", value: { kind: "codeblock", value: program }}) %}
 
 group -> parenthesized[_ program _] {% ([[, [, program]]])=> ({ kind: "group", program }) %}
 

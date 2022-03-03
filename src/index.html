@@ -14,29 +14,40 @@
       <noscript>
          This page uses JavaScript to run.
       </noscript>
+      <h1>Broccoli language interpreter</h1>
       <div id="container">
          <h2>Program</h2>
-         <textarea id="program"></textarea>
+         <textarea id="program">7 = a 8 = b a * b output</textarea>
          <h2>Stdin</h2>
          <textarea id="stdin"></textarea>
-         <h2>Output</h2>
-         <pre id="output"></pre>
+         <h2>Stderr</h2>
+         <pre id="stderr"></pre>
+         <h2>Stdout</h2>
+         <pre id="stdout"></pre>
       </div>
       <script type="module">
          import { createBroccoli } from "./broccoli"
 
          let program = document.getElementById("program")
          let stdin = document.getElementById("stdin")
-         let output = document.getElementById("output")
+         let stderr = document.getElementById("stderr")
+         let stdout = document.getElementById("stdout")
 
          function handleChange() {
-            console.log("got change")
             setTimeout(update, 1)
          }
 
          function update() {
-            output.innerText = createBroccoli(program.value).run(stdin.value)
+            stderr.innerText = ""
+            try {
+               stdout.innerText = createBroccoli(program.value).run(stdin.value)
+            } catch (error) {
+               stdout.innerText = ""
+               stderr.innerText = error
+            }
          }
+
+         update()
 
          program.addEventListener("input", handleChange, true)
          stdin.addEventListener("input", handleChange, true)

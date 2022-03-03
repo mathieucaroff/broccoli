@@ -11,7 +11,6 @@ content:
       stdin: ""
       output: "4"
   - name: cat
-    flag: FOCUS
     input:
       program: "{ input output } loop"
       stdin: |
@@ -22,7 +21,7 @@ content:
         ef1234
   - name: reverse cat
     input:
-      program: stdin .read reverse stdout .write
+      program: stdin .read .reverse stdout .write
       stdin: |
         abc
         def
@@ -30,7 +29,7 @@ content:
       output: "\n321\nfed\ncba"
   - name: truth machine
     input:
-      program: "{ 0 output } { { 1 output } loop } input == 0 if"
+      program: "{ 0 output } { { 1 output } loop } input == "0" if"
       stdin: "0"
       output: "0"
   - name: self interpreter
