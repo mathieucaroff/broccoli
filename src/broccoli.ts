@@ -11,8 +11,38 @@ import {
     BroccoliValue,
 } from "./type"
 
+export function createBroccoli(programString: string) {
+    let parser = new nearley.Parser(broccoliGrammar)
+    parser.feed(programString)
+    let program = parser.results[0]
+    if (!program) {
+        throw "The program doesn't parse"
+    }
+
+    return {
+        run(stdinString: string) {
+            let runtime: BroccoliRuntime = {
+                reader: createStringReader(stdinString),
+                writer: createStringWriter(),
+                stack: [],
+            }
+            runProgram(program, runtime, predefinedFrame, true)
+            return runtime.writer.get()
+        },
+        runeval(rt: BroccoliRuntime, frame: BroccoliFrame) {
+            runProgram(program, rt, frame, false)
+        },
+    }
+}
+
 export let predefinedFrame: BroccoliFrame = {
     data: {
+        printstack: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                rt.writer.write("<" + JSON.stringify(rt.stack, null, 2) + ">")
+            },
+        },
         true: { kind: "boolean", value: true },
         false: { kind: "boolean", value: false },
         output: {
@@ -39,40 +69,53 @@ export let predefinedFrame: BroccoliFrame = {
                 }
             },
         },
+        if: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let [ifyes, ifno, test] = rt.stack.splice(-3, 3)
+                if (
+                    ifyes.kind !== "codeblock" ||
+                    ifno.kind !== "codeblock" ||
+                    test.kind !== "boolean"
+                ) {
+                    throw new TypeError(
+                        `Expected two codeblocks and a boolean but got ${ifyes.kind}, ${ifno.kind} and ${test.kind}`,
+                    )
+                }
+                runProgram(test.value ? ifyes.value : ifno.value, rt, frame, false)
+            },
+        },
+        run: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let codeblock = rt.stack.pop()!
+                if (codeblock.kind !== "codeblock") {
+                    throw new TypeError(`Expected a codeblock but got a ${codeblock.kind}`)
+                }
+                runProgram(codeblock.value, rt, frame, true)
+            },
+        },
+        eval: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let text = rt.stack.pop()!
+                if (text.kind !== "string") {
+                    throw new TypeError(`Expected a string but got a ${text.kind}`)
+                }
+                createBroccoli(text.value).runeval(rt, frame)
+            },
+        },
         // stdin: {},
         // stdout: {},
-        // eval: {},
         // reduce: {},
     },
-}
-
-export function createBroccoli(programString: string) {
-    let parser = new nearley.Parser(broccoliGrammar)
-    let error: any
-    parser.feed(programString)
-    let program = parser.results[0]
-    if (!program) {
-        throw "The program doesn't parse"
-    }
-
-    return {
-        run(stdinString: string) {
-            let runtime: BroccoliRuntime = {
-                reader: createStringReader(stdinString),
-                writer: createStringWriter(),
-                stack: [],
-            }
-            runProgram(program, runtime, predefinedFrame, true)
-            return runtime.writer.get()
-        },
-    }
 }
 
 function runProgram(
     program: BroccoliTreeProgram,
     runtime: BroccoliRuntime,
     frame: BroccoliFrame,
-    createNewFrame,
+    createNewFrame: boolean,
 ) {
     if (createNewFrame) {
         frame = {
@@ -124,7 +167,8 @@ function runExpression(
     }
 }
 
-function frameLookup(frame: BroccoliFrame, name: string, error: string): BroccoliValue {
+function frameLookup(initialFrame: BroccoliFrame, name: string, error: string): BroccoliValue {
+    let frame = initialFrame
     let result = frame.data[name]
     let k = 0
     while (!result && frame.parent && k < 100) {

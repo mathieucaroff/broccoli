@@ -18,6 +18,8 @@ export let caseArray: Case<string, any>[] = [
     success("iidentifier89_", { kind: "identifier", name: "identifier89_" }),
     success("x.propertyname", { kind: "access", name: "propertyname" }),
     success('s"abc"', litteralString("abc")),
+    success("n0", litteralNumber(0)),
+    success("n1", litteralNumber(1)),
     success("n98", litteralNumber(98)),
     success("o+28", { kind: "operation", operator: "+", target: litteralNumber(28) }),
     success("o<=18", { kind: "operation", operator: "<=", target: litteralNumber(18) }),

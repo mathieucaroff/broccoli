@@ -2,7 +2,7 @@ braced[X] -> "{" $X "}"
 parenthesized[X] -> "(" $X ")"
 bracketed[X] -> "[" $X "]"
 
-main -> program {% ([program]) => program %}
+main -> _ program _ {% ([, program]) => program %}
 
 program -> (expression (__ expression):*):? {% ([content]) => {
     if (content === null) return []
@@ -20,7 +20,8 @@ string -> "\"" string_content:* "\"" {% ([, value]) => ({ kind: "litteral", valu
 
 string_content -> [^"\n\\] | "\\" .
 
-number -> [1-9] [0-9]:* {% (value) => ({ kind: "litteral", value: { kind: "number", value: +value.join("") }}) %}
+number -> number_ {% ([value]) => ({ kind: "litteral", value: { kind: "number", value: +value.join("") }}) %}
+number_ -> "0" | [1-9] [0-9]:*
 
 operation -> operator _ expression {% ([[operator], , target]) => ({ kind: "operation", operator, target }) %}
 
