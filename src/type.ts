@@ -1,36 +1,69 @@
-type BroccoliTree = 0
-type BroccoliTreeProgram = BroccoliTreeExpression[]
-type BroccoliTreeExpression = 0
-interface BroccoliTreeIdentifier {
-    kind: "identyifier"
+// /\
+// TREE
+// BroccoliTree*
+export type BroccoliTreeProgram = BroccoliTreeExpression[]
+
+export type BroccoliTreeExpression =
+    | BroccoliTreeIdentifier
+    | BroccoliTreeAccess
+    | BroccoliTreeString
+    | BroccoliTreeNumber
+    | BroccoliTreeOperation
+    | BroccoliTreeAssignment
+    | BroccoliTreeCodeBlock
+    | BroccoliTreeGroup
+
+export interface BroccoliTreeIdentifier {
+    kind: "identifier"
     name: string
 }
-interface BroccoliTreeAccess {
+export interface BroccoliTreeAccess {
     kind: "access"
     name: string
 }
-interface BroccoliTreeString {
+export interface BroccoliTreeString {
     kind: "string"
     value: string
 }
-interface BroccoliTreeNumber {
+export interface BroccoliTreeNumber {
     kind: "number"
     value: number
 }
-interface BroccoliTreeOperation {
+export interface BroccoliTreeOperation {
     kind: "operation"
     operator: "<=" | ">=" | "<<" | ">>" | "-" | "+" | "*" | "/" | "%" | "<" | ">" | "&" | "^" | "|"
     target: BroccoliTreeExpression
 }
-interface BroccoliTreeAssignment {
+export interface BroccoliTreeAssignment {
     kind: "assignment"
     target: string
 }
-interface BroccoliTreeCodeBlock {
+export interface BroccoliTreeCodeBlock {
     kind: "codeblock"
     program: BroccoliTreeProgram
 }
-interface BroccoliTreeGroup {
+export interface BroccoliTreeGroup {
     kind: "group"
     program: BroccoliTreeProgram
+}
+// TREE
+// \/
+
+export type BroccoliValue = BroccoliString | BroccoliNumber | BroccoliBoolean | BroccoliCodeBlock
+
+export interface BroccoliString {
+    kind: "string"
+    value: string
+}
+export interface BroccoliNumber {
+    kind: "number"
+    value: number
+}
+export interface BroccoliBoolean {
+    kind: "boolean"
+    value: boolean
+}
+export interface BroccoliCodeBlock {
+    kind: "codeblock"
+    value: BroccoliTreeProgram
 }

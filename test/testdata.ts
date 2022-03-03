@@ -3,13 +3,20 @@ import { success, failure, Case } from "./lib/languageTestEngine"
 export let caseArray: Case<string, any>[] = [
     success("iidentifier89_", { kind: "identifier", name: "identifier89_" }),
     success("x.propertyname", { kind: "access", name: "propertyname" }),
-    success('s"a"', { kind: "string", value: "a" }),
+    success('s"abc"', { kind: "string", value: "abc" }),
     success("n98", { kind: "number", value: 98 }),
-    success("o+8", { kind: "operation", operator: "+", target: { kind: "number", value: 8 } }),
+    success("o+28", { kind: "operation", operator: "+", target: { kind: "number", value: 28 } }),
     success("o<=18", { kind: "operation", operator: "<=", target: { kind: "number", value: 18 } }),
     success("a=meaning", { kind: "assignment", target: "meaning" }),
     success("c{}", { kind: "codeblock", program: [] }),
     success("c{a}", { kind: "codeblock", program: [{ kind: "identifier", name: "a" }] }),
+    success("c{a 9}", {
+        kind: "codeblock",
+        program: [
+            { kind: "identifier", name: "a" },
+            { kind: "number", value: 9 },
+        ],
+    }),
     success("g()", { kind: "group", program: [] }),
     success("g(a)", { kind: "group", program: [{ kind: "identifier", name: "a" }] }),
     success("p", []),

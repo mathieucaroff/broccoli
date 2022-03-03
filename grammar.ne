@@ -16,7 +16,7 @@ identifier -> [A-Za-z_] [0-9A-Za-z_]:* {% ([first, rest]) => ({ kind: "identifie
 
 access -> "." identifier {% ([, { name }]) => ({ kind: "access", name }) %}
 
-string -> "\"" string_content:* "\"" {% ([, [[value]]]) => ({ kind: "string", value }) %}
+string -> "\"" string_content:* "\"" {% ([, value]) => ({ kind: "string", value: value.join("") }) %}
 
 string_content -> [^"\n\\] | "\\" .
 

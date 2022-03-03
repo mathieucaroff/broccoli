@@ -12,10 +12,35 @@
 <body>
    <div class="bodyDiv">
       <noscript>
-         You need to enable JavaScript to run this app.
+         This page uses JavaScript to run.
       </noscript>
-      <div id="appRoot"></div>
-      <script type="module" src="./main.ts"></script>
+      <div id="container">
+         <h2>Program</h2>
+         <textarea id="program"></textarea>
+         <h2>Stdin</h2>
+         <textarea id="stdin"></textarea>
+         <h2>Output</h2>
+         <pre id="output"></pre>
+      </div>
+      <script type="module">
+         import { createBroccoli } from "./broccoli"
+
+         let program = document.getElementById("program")
+         let stdin = document.getElementById("stdin")
+         let output = document.getElementById("output")
+
+         function handleChange() {
+            console.log("got change")
+            setTimeout(update, 1)
+         }
+
+         function update() {
+            output.innerText = createBroccoli(program.value).run(stdin.value)
+         }
+
+         program.addEventListener("input", handleChange, true)
+         stdin.addEventListener("input", handleChange, true)
+      </script>
    </div>
 </body>
 
