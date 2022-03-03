@@ -71,7 +71,7 @@ export let testEngine = <TI extends string, TO = any>(
 
         // Check result length
         if (results.length !== 1) {
-            reportArray.push(`number of results is not 1: it's ${results.length}`)
+            reportArray.push(`with input ${input}, there are several results (${results.length})`)
             return FAILED
         }
 

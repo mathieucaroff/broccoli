@@ -24,7 +24,7 @@ operation -> operator _ expression {% ([[operator], , target]) => ({ kind: "oper
 
 operator -> "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
 
-assignment -> "=" _ identifier {% (target) => ({ kind: "assignment", target }) %}
+assignment -> "=" _ identifier {% ([, , { name }]) => ({ kind: "assignment", target: name }) %}
 
 codeblock -> braced[_ program _] {% ([[, [, program]]]) => ({ kind: "codeblock", program }) %}
 

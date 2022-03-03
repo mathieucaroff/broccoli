@@ -8,5 +8,6 @@ test_ -> "p" program
  | "s" string
  | "n" number
  | "o" operation
+ | "a" assignment
  | "c" codeblock
  | "g" group
