@@ -195,9 +195,10 @@ function runExpression(
 ) {
     let { stack } = runtime
     let entry: BroccoliValue
+    let previous: BroccoliValue
     switch (expression.kind) {
         case "access":
-            let previous = stack.pop()!
+            previous = stack.pop()!
             if (previous.kind === "native") {
                 entry = previous.value.data[expression.name]
                 runEntry(entry, runtime, frame)
@@ -207,6 +208,13 @@ function runExpression(
             break
         case "assignment":
             frame.data[expression.target] = stack.pop()!
+            break
+        case "functionassignment":
+            previous = stack.pop()!
+            if (previous.kind !== "codeblock") {
+                throw new TypeError(`Expected a codeblock but got a ${previous.kind}`)
+            }
+            frame.data[expression.target] = { kind: "function", value: previous.value }
             break
         case "litteral":
             stack.push(expression.value)

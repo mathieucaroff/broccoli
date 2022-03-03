@@ -9,6 +9,7 @@ export type BroccoliTreeExpression =
     | BroccoliTreeLitteral
     | BroccoliTreeOperation
     | BroccoliTreeAssignment
+    | BroccoliTreeFunctionAssignment
     | BroccoliTreeGroup
 
 export interface BroccoliTreeIdentifier {
@@ -46,6 +47,10 @@ export interface BroccoliTreeOperation {
 }
 export interface BroccoliTreeAssignment {
     kind: "assignment"
+    target: string
+}
+export interface BroccoliTreeFunctionAssignment {
+    kind: "functionassignment"
     target: string
 }
 export interface BroccoliTreeGroup {

@@ -10,7 +10,7 @@ program -> (expression (__ expression):*):? {% ([content]) => {
 } %}
 
 expression -> expression_ {% ([[value]]) => (value) %}
-expression_ -> identifier | access | string | number | operation | assignment | codeblock | group
+expression_ -> identifier | access | string | number | operation | assignment | codeblock | functionassignment | group
 
 identifier -> [A-Za-z_] [0-9A-Za-z_]:* {% ([first, rest]) => ({ kind: "identifier", name: first+rest.join("") }) %}
 
@@ -28,6 +28,7 @@ operation -> operator _ expression {% ([[operator], , target]) => ({ kind: "oper
 operator -> "==" | "!=" | "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
 
 assignment -> "=" _ identifier {% ([, , { name }]) => ({ kind: "assignment", target: name }) %}
+functionassignment -> ":" _ identifier {% ([, , { name }]) => ({ kind: "functionassignment", target: name }) %}
 
 codeblock -> braced[_ program _] {% ([[, [, program]]]) => ({ kind: "litteral", value: { kind: "codeblock", value: program }}) %}
 
