@@ -9,5 +9,6 @@ test_ -> "p" program
  | "n" number
  | "o" operation
  | "a" assignment
+ | "x" access
  | "c" codeblock
  | "g" group

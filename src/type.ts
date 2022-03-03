@@ -5,6 +5,10 @@ interface BroccoliTreeIdentifier {
     kind: "identyifier"
     name: string
 }
+interface BroccoliTreeAccess {
+    kind: "access"
+    name: string
+}
 interface BroccoliTreeString {
     kind: "string"
     value: string
