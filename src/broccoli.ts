@@ -35,6 +35,10 @@ export function createBroccoli(programString: string) {
     }
 }
 
+export function isScalar(value: BroccoliValue) {
+    return ["string", "number", "boolean"].includes(value.kind)
+}
+
 export let predefinedFrame: BroccoliFrame = {
     data: {
         printstack: {
@@ -54,7 +58,23 @@ export let predefinedFrame: BroccoliFrame = {
         input: {
             kind: "nativefunction",
             value: (rt, frame) => {
-                rt.stack.push({ kind: "string", value: rt.reader.read(1) })
+                let valueArray: string[] = []
+                let c = rt.reader.read(1)
+                while (c !== "\n" && c !== "") {
+                    valueArray.push(c)
+                    c = rt.reader.read(1)
+                }
+                rt.stack.push({ kind: "string", value: valueArray.join("") })
+            },
+        },
+        number: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let entry = rt.stack.pop()!
+                if (!isScalar(entry)) {
+                    throw new TypeError(`Expected a scalar value but got ${entry.kind}`)
+                }
+                rt.stack.push({ kind: "number", value: +entry.value })
             },
         },
         loop: {
@@ -72,17 +92,17 @@ export let predefinedFrame: BroccoliFrame = {
         if: {
             kind: "nativefunction",
             value: (rt, frame) => {
-                let [ifyes, ifno, test] = rt.stack.splice(-3, 3)
+                let [ifyes, ifno, testresult] = rt.stack.splice(-3, 3)
                 if (
                     ifyes.kind !== "codeblock" ||
                     ifno.kind !== "codeblock" ||
-                    test.kind !== "boolean"
+                    testresult.kind !== "boolean"
                 ) {
                     throw new TypeError(
-                        `Expected two codeblocks and a boolean but got ${ifyes.kind}, ${ifno.kind} and ${test.kind}`,
+                        `Expected two codeblocks and a boolean but got ${ifyes.kind}, ${ifno.kind} and ${testresult.kind}`,
                     )
                 }
-                runProgram(test.value ? ifyes.value : ifno.value, rt, frame, false)
+                runProgram(testresult.value ? ifyes.value : ifno.value, rt, frame, false)
             },
         },
         run: {
@@ -105,9 +125,26 @@ export let predefinedFrame: BroccoliFrame = {
                 createBroccoli(text.value).runeval(rt, frame)
             },
         },
+        while: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let [body, test] = rt.stack.splice(-2, 2)
+                if (body.kind !== "codeblock" || test.kind !== "codeblock") {
+                    throw new TypeError(
+                        `Expected two codeblocks but got ${body.kind} and ${test.kind}`,
+                    )
+                }
+                let k = 0
+                while (
+                    (runProgram(test.value, rt, frame, false), rt.stack.pop()!.value && k < 1000)
+                ) {
+                    runProgram(body.value, rt, frame, false)
+                    k += 1
+                }
+            },
+        },
         // stdin: {},
         // stdout: {},
-        // reduce: {},
     },
 }
 
