@@ -23,7 +23,7 @@ string_content -> [^"\n\\] | "\\" .
 number -> number_ {% ([value]) => ({ kind: "litteral", value: { kind: "number", value: +value.join("") }}) %}
 number_ -> "0" | [1-9] [0-9]:*
 
-operation -> operator _ expression {% ([[operator], , target]) => ({ kind: "operation", operator, target }) %}
+operation -> operator __ expression {% ([[operator], , target]) => ({ kind: "operation", operator, target }) %}
 
 operator -> "==" | "!=" | "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
 

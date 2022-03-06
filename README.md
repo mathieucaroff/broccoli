@@ -93,7 +93,7 @@ string_content -> [^"\n\\] | "\\" .
 
 number -> [1-9] [0-9]:*
 
-operation -> operator _ expression
+operation -> operator __ expression
 
 operator -> "==" | "!=" | "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
 
