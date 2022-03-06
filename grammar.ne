@@ -20,8 +20,10 @@ string -> "\"" string_content:* "\"" {% ([, value]) => ({ kind: "litteral", valu
 
 string_content -> [^"\n\\] | "\\" .
 
-number -> number_ {% ([value]) => ({ kind: "litteral", value: { kind: "number", value: +value.join("") }}) %}
-number_ -> "0" | [1-9] [0-9]:*
+number -> ("0" | [1-9] [0-9]:*) {% ([[head, body = []]]) => ({
+    kind: "litteral",
+    value: { kind: "number", value: +(head + body.join(""))
+}}) %}
 
 operation -> operator __ expression {% ([[operator], , target]) => ({ kind: "operation", operator, target }) %}
 
