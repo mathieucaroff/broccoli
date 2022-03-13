@@ -5,7 +5,7 @@
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
    <meta name="theme-color" content="#000000">
-   <title>Broccoli language</title>
+   <title>Broccoli interpreter</title>
    <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -26,7 +26,13 @@
          <pre id="stdout"></pre>
       </div>
       <script type="module">
+         import { githubCornerHTML } from "./lib/githubCorner"
          import { createBroccoli } from "./broccoli.ts"
+         import { repository, version } from "../package.json"
+
+         let div = document.createElement("div")
+         div.innerHTML = githubCornerHTML(repository.url, version)
+         document.body.appendChild(div)
 
          let program = document.getElementById("program")
          let stdin = document.getElementById("stdin")

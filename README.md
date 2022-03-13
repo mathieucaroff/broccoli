@@ -40,6 +40,15 @@ You can try the JS interpreter at [this address](https://mathieucaroff.com/brocc
   if
   ```
 
+- Copy input on output (cat program):
+
+  ```
+  input
+  { output input "\n" output }
+  { = a a a }
+  while
+  ```
+
 ## Control flow
 
 Broccoli does not have keywords, but has predefined variables that can be used for codeflow instead.
@@ -63,9 +72,9 @@ Broccoli features the following predefined variables:
 - run
   - pop a codeblock from the stack and run it in the current frame
 - eval
-  - pop one string from the stack, parse it and run it in the current frame
+  - pop a string from the stack, parse it and run it in the current frame
 - input
-  - read one line from the stdin, removing the newline at the end
+  - read a line from the stdin, removing the newline at the end
 - number
   - convert a scalar value to a number
 - output

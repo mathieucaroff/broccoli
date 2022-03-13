@@ -2,6 +2,9 @@
   "name": "broccoli",
   "version": "1.0.0",
   "license": "NTP",
+  "repository": {
+    "url": "https://github.com/mathieucaroff/broccoli"
+  },
   "scripts": {
       "check": "tsc --noEmit",
       "checkwatch": "tsc --noEmit --watch",

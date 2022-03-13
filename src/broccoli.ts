@@ -167,8 +167,6 @@ export let predefinedFrame: BroccoliFrame = {
                 }
             },
         },
-        // stdin: {},
-        // stdout: {},
     },
 }
 
