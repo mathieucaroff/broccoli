@@ -44,7 +44,7 @@ You can try the JS interpreter at [this address](https://mathieucaroff.com/brocc
 
   ```
   input
-  { output input "\n" output }
+  { output input }
   { = a a a }
   while
   ```

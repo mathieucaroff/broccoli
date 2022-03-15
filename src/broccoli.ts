@@ -69,6 +69,23 @@ export let predefinedFrame: BroccoliFrame = {
                 },
             },
         },
+        stdout: {
+            kind: "native",
+            value: {
+                data: {
+                    write: {
+                        kind: "nativefunction",
+                        value: (rt, frame) => {
+                            let entry = rt.stack.pop()!
+                            if (!isScalar(entry)) {
+                                throw new TypeError(`Expected a scalar but got a ${entry.kind}`)
+                            }
+                            rt.writer.write(entry.value.toString())
+                        },
+                    },
+                },
+            },
+        },
         output: {
             kind: "nativefunction",
             value: (rt, frame) => {
@@ -76,7 +93,7 @@ export let predefinedFrame: BroccoliFrame = {
                 if (!isScalar(entry)) {
                     throw new TypeError(`Expected a scalar but got a ${entry.kind}`)
                 }
-                rt.writer.write(entry.value.toString())
+                rt.writer.write(entry.value.toString() + "\n")
             },
         },
         input: {
