@@ -34,19 +34,26 @@ You can try the JS interpreter at [this address](https://mathieucaroff.com/brocc
 - [Truth machine](https://esolangs.org/wiki/Truth-machine):
 
   ```
+  { { 1 stdout .write } { true } while }
   { 0 output }
-  { { 1 output } { true } while }
-  input == 0
+  input number == 1
   if
   ```
 
-- Copy input on output (cat program):
+- Copy input on output until an empty line is met or until the input ends:
 
   ```
   input
   { output input }
   { = a a a }
   while
+  ```
+
+- Copy input on output (cat program):
+
+  ```
+  stdin .read
+  stdout .write
   ```
 
 ## Control flow
