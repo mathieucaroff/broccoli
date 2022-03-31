@@ -1,7 +1,7 @@
 import { default as nearley } from "nearley"
 
 import broccoliGrammar from "../grammar.ne"
-import { createStringReader, createStringWriter } from "./util"
+import { createStringReader } from "./util"
 import {
     BroccoliFrame,
     BroccoliRuntime,
@@ -11,7 +11,7 @@ import {
     BroccoliValue,
 } from "./type"
 
-export function createBroccoli(programString: string) {
+export function createBroccoli(programString: string, write: (v: string) => void) {
     let parser = new nearley.Parser(broccoliGrammar)
     parser.feed(programString)
     let program = parser.results[0]
@@ -23,11 +23,10 @@ export function createBroccoli(programString: string) {
         run(stdinString: string) {
             let runtime: BroccoliRuntime = {
                 reader: createStringReader(stdinString),
-                writer: createStringWriter(),
+                write,
                 stack: [],
             }
             runProgram(program, runtime, predefinedFrame, true)
-            return runtime.writer.get()
         },
         runeval(rt: BroccoliRuntime, frame: BroccoliFrame) {
             runProgram(program, rt, frame, false)
@@ -44,7 +43,7 @@ export let predefinedFrame: BroccoliFrame = {
         printstack: {
             kind: "nativefunction",
             value: (rt, frame) => {
-                rt.writer.write("<" + JSON.stringify(rt.stack, null, 2) + ">")
+                rt.write("<" + JSON.stringify(rt.stack, null, 2) + ">")
             },
         },
         true: { kind: "boolean", value: true },
@@ -80,7 +79,7 @@ export let predefinedFrame: BroccoliFrame = {
                             if (!isScalar(entry)) {
                                 throw new TypeError(`Expected a scalar but got a ${entry.kind}`)
                             }
-                            rt.writer.write(entry.value.toString())
+                            rt.write(entry.value.toString())
                         },
                     },
                 },
@@ -93,7 +92,7 @@ export let predefinedFrame: BroccoliFrame = {
                 if (!isScalar(entry)) {
                     throw new TypeError(`Expected a scalar but got a ${entry.kind}`)
                 }
-                rt.writer.write(entry.value.toString() + "\n")
+                rt.write(entry.value.toString() + "\n")
             },
         },
         input: {
@@ -163,7 +162,7 @@ export let predefinedFrame: BroccoliFrame = {
                 if (text.kind !== "string") {
                     throw new TypeError(`Expected a string but got a ${text.kind}`)
                 }
-                createBroccoli(text.value).runeval(rt, frame)
+                createBroccoli(text.value, rt.write).runeval(rt, frame)
             },
         },
         while: {

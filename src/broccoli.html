@@ -18,13 +18,13 @@
       <div id="container">
          <h2>Program</h2>
          <p>Example: <select id="exampleSelect"><option value="-">-</option></select></p>
-         <textarea id="program" rows="5">3 = a
+         <textarea id="program" rows="5" spellcheck="false">3 = a
 input = b
 input number = c
 b output
 a * c output</textarea>
          <h2>Stdin</h2>
-         <textarea id="stdin" rows="2">Multiplication:
+         <textarea id="stdin" rows="2" spellcheck="false">Multiplication:
 5</textarea>
          <h2>Stderr</h2>
          <pre id="stderr"></pre>
@@ -68,9 +68,9 @@ a * c output</textarea>
             }
             stderr.innerText = ""
             try {
-               stdout.innerText = createBroccoli(program.value).run(stdin.value)
-            } catch (error) {
                stdout.innerText = ""
+               createBroccoli(program.value, (v) => stdout.innerText += v).run(stdin.value)
+            } catch (error) {
                stderr.innerText = error
             }
          }

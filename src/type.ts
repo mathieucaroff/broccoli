@@ -107,10 +107,6 @@ export interface BroccoliNativeFunction {
 export interface Reader {
     read(count: number): string
 }
-export interface Writer {
-    write(v: string): void
-    get(): string
-}
 // UTIL
 // \/
 
@@ -118,7 +114,7 @@ export interface Writer {
 // RUN
 export interface BroccoliRuntime {
     reader: Reader
-    writer: Writer
+    write: (v: string) => void
     stack: BroccoliValue[]
 }
 
