@@ -17,6 +17,7 @@
       <h1>🥦Broccoli language interpreter</h1>
       <div id="container">
          <h2>Program</h2>
+         <p>Example: <select id="exampleSelect"><option value="-">-</option></select></p>
          <textarea id="program" rows="5">3 = a
 input = b
 input number = c
@@ -33,22 +34,38 @@ a * c output</textarea>
       <script type="module">
          import { githubCornerHTML } from "./lib/githubCorner"
          import { createBroccoli } from "./broccoli.ts"
+         import { exampleObject } from "./example.ts"
          import { repository, version } from "../package.json"
 
          let div = document.createElement("div")
          div.innerHTML = githubCornerHTML(repository.url, version)
          document.body.appendChild(div)
 
+         let select = document.getElementById("exampleSelect")
          let program = document.getElementById("program")
          let stdin = document.getElementById("stdin")
          let stderr = document.getElementById("stderr")
          let stdout = document.getElementById("stdout")
+
+         Object.keys(exampleObject).forEach((key) => {
+            let option = document.createElement("option")
+            option.textContent = key
+            option.value = key
+            select.appendChild(option)
+         })
+         select.addEventListener("change", () => {
+            [program.value, stdin.value] = exampleObject[select.value]
+            update()
+         })
 
          function handleChange() {
             setTimeout(update, 1)
          }
 
          function update() {
+            if (program.value !== exampleObject[select.value]?.[0]) {
+               select.value = "-"
+            }
             stderr.innerText = ""
             try {
                stdout.innerText = createBroccoli(program.value).run(stdin.value)
