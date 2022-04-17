@@ -6,10 +6,11 @@
     "url": "https://github.com/mathieucaroff/broccoli"
   },
   "scripts": {
-      "check": "tsc --noEmit",
-      "checkwatch": "tsc --noEmit --watch",
-      "build": "parcel build src/broccoli.html --public-url broccoli.d",
-      "serve": "parcel src/broccoli.html"
+    "check": "tsc --noEmit",
+    "checkwatch": "tsc --noEmit --watch",
+    "build": "parcel build src/index.html --dist-dir public",
+    "mcabuild": "parcel build src/index.html --public-url broccoli.d",
+    "serve": "parcel src/broccoli.html"
   },
   "dependencies": {
     "nearley": "^2.20.1"
