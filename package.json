@@ -10,7 +10,7 @@
     "checkwatch": "tsc --noEmit --watch",
     "build": "parcel build src/index.html --dist-dir public",
     "mcabuild": "parcel build src/index.html --public-url broccoli.d",
-    "serve": "parcel src/broccoli.html"
+    "serve": "parcel src/index.html"
   },
   "dependencies": {
     "nearley": "^2.20.1"

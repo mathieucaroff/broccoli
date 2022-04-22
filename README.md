@@ -56,6 +56,20 @@ You can try the JS interpreter at [this address](https://mathieucaroff.com/brocc
   stdout .write
   ```
 
+- Running a code block with `run`:
+
+  ```
+  { input output } = copy
+  copy run
+  ```
+
+- Creating and invoking a function:
+
+  ```
+  { "Hello world!" output } : hello
+  hello
+  ```
+
 ## Control flow
 
 Broccoli does not have keywords, but has predefined variables that can be used for codeflow instead.
@@ -97,7 +111,7 @@ main -> _ program _
 
 program -> (expression (__ expression):*):?
 
-expression -> identifier | string | number | operation | assignment | codeblock | group
+expression -> identifier | string | number | operation | assignment | functionassignment | codeblock | group
 
 identifier -> [A-Za-z_] [0-9A-Za-z_]:*
 
@@ -114,6 +128,8 @@ operation -> operator __ expression
 operator -> "==" | "!=" | "<=" | ">=" | "<<" | ">>" | [-+*/%<>&^|]
 
 assignment -> "=" _ identifier
+
+functionassignment -> ":" _ identifier
 
 codeblock -> braced[_ program _]
 
@@ -141,3 +157,7 @@ yarn install
 yarn serve
 # or npm run serve
 ```
+
+### Run the test
+
+To test the parser, run `yarn parcel test/testParser.html` and open the given link.

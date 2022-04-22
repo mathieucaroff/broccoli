@@ -10,7 +10,7 @@ program -> (expression (__ expression):*):? {% ([content]) => {
 } %}
 
 expression -> expression_ {% ([[value]]) => (value) %}
-expression_ -> identifier | access | string | number | operation | assignment | codeblock | functionassignment | group
+expression_ -> identifier | access | string | number | operation | assignment | functionassignment | codeblock | group
 
 identifier -> [A-Za-z_] [0-9A-Za-z_]:* {% ([first, rest]) => ({ kind: "identifier", name: first+rest.join("") }) %}
 

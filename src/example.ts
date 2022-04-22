@@ -48,4 +48,21 @@ export let exampleObject = {
         _
         `,
     ],
+    "Run a code block": [
+        dedent`
+        { input output } = copy
+        copy run
+        `,
+        dedent`
+        content line one
+        content line two
+        `,
+    ],
+    "Create and invoke a function": [
+        dedent`
+        { "Hello world!" output } : hello
+        hello
+        `,
+        "",
+    ],
 }
