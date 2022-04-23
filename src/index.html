@@ -55,6 +55,8 @@ a * c output</textarea>
          })
          select.addEventListener("change", () => {
             [program.value, stdin.value] = exampleObject[select.value]
+            program.rows = Math.max(program.rows, program.value.split("\n").length)
+            stdin.rows = stdin.value.split("\n").length
             update()
          })
 
