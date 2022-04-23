@@ -71,7 +71,11 @@ a * c output</textarea>
                stdout.innerText = ""
                createBroccoli(program.value, (v) => stdout.innerText += v).run(stdin.value)
             } catch (error) {
-               stderr.innerText = error
+               errorText = "" + error
+               if (errorText.startsWith("Error: Syntax error at line ")) {
+                  errorText = errorText.replace(/ based on:(\n    .*)+/g, '')
+               }
+               stderr.innerText = errorText
             }
          }
 
