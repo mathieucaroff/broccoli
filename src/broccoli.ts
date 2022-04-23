@@ -266,13 +266,18 @@ function frameLookup(initialFrame: BroccoliFrame, name: string, error: string): 
     let frame = initialFrame
     let result = frame.data[name]
     let k = 0
-    while (!result && frame.parent && k < 100) {
+    let recursionLimit = 100
+    while (result === undefined && frame.parent && k < recursionLimit) {
         frame = frame.parent
         result = frame.data[name]
         k += 1
     }
-    if (!result) {
-        throw new ReferenceError(error)
+    if (result === undefined) {
+        if (k >= recursionLimit) {
+            throw new Error("too much codeblock recursion")
+        } else {
+            throw new ReferenceError(error)
+        }
     }
     return result
 }
@@ -308,7 +313,18 @@ let operatorMap: Record<
     "*": numericOperator((a, b) => a * b),
     "/": numericOperator((a, b) => a / b),
     "%": numericOperator((a, b) => ((a % b) + b) % b),
-    "+": numericOperator((a, b) => a + b),
+    "+": (a: BroccoliValue, b: BroccoliValue) => {
+        if (!["string", "number"].includes(a.kind) || !["string", "number"].includes(b.kind)) {
+            throw new TypeError(
+                `got incompatible types ${a.kind} and ${b.kind} in addition operator`,
+            )
+        }
+        let kind: BroccoliValue["kind"] = "string"
+        if (a.kind === "number" && b.kind === "number") {
+            kind = "number"
+        }
+        return { kind, value: a.value + b.value }
+    },
     "-": numericOperator((a, b) => a - b),
     "<<": numericOperator((a, b) => a << b),
     ">>": numericOperator((a, b) => a >> b),
