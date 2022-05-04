@@ -1,4 +1,4 @@
-@include "../grammar.ne"
+@include "../../grammar.ne"
 
 test -> test_ {% ([[, content]]) => content %}
 

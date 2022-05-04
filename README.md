@@ -160,4 +160,4 @@ yarn serve
 
 ### Run the test
 
-To test the parser, run `yarn parcel test/testParser.html` and open the given link.
+To test the parser, run `yarn parcel test/parser/test.html` and open the given given link.
