@@ -66,6 +66,8 @@ export type BroccoliValue =
     | BroccoliString
     | BroccoliNumber
     | BroccoliBoolean
+    | BroccoliArray
+    | BroccoliObject
     | BroccoliCodeBlock
     | BroccoliFunction
     | BroccoliNativeFunction
@@ -82,6 +84,14 @@ export interface BroccoliNumber {
 export interface BroccoliBoolean {
     kind: "boolean"
     value: boolean
+}
+export interface BroccoliArray {
+    kind: "array"
+    value: any[]
+}
+export interface BroccoliObject {
+    kind: "object"
+    value: Record<string, any>
 }
 export interface BroccoliCodeBlock {
     kind: "codeblock"

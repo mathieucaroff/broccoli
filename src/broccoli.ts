@@ -38,6 +38,10 @@ export function isScalar(value: BroccoliValue) {
     return ["string", "number", "boolean"].includes(value.kind)
 }
 
+/**
+ * The predefined frame contains all the soft keywords as well as the value
+ * they are associated with.
+ */
 export let predefinedFrame: BroccoliFrame = {
     data: {
         printstack: {
@@ -117,6 +121,24 @@ export let predefinedFrame: BroccoliFrame = {
                 rt.stack.push({ kind: "number", value: +entry.value })
             },
         },
+        array: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                rt.stack.push({
+                    kind: "array",
+                    value: [],
+                })
+            },
+        },
+        object: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                rt.stack.push({
+                    kind: "object",
+                    value: {},
+                })
+            },
+        },
         loop: {
             kind: "nativefunction",
             value: (rt, frame) => {
@@ -183,9 +205,87 @@ export let predefinedFrame: BroccoliFrame = {
                 }
             },
         },
+        // TODO:
+        // toJson: {}
+        // fromJson: {}
     },
 }
 
+export let arrayMethodMap: BroccoliFrame["data"] = {
+    push: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let [value, array] = rt.stack.splice(-2, 2)
+            array.value.push(value)
+        },
+    },
+    pop: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let array = rt.stack.pop()!
+            rt.stack.push(array.value.pop())
+        },
+    },
+    unshift: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let [value, array] = rt.stack.splice(-2, 2)
+            array.value.unshift(value)
+        },
+    },
+    shift: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let array = rt.stack.pop()!
+            rt.stack.push(array.value.shift())
+        },
+    },
+    get: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let [index, array] = rt.stack.splice(-2, 2)
+            if (index.kind !== "number") {
+                throw TypeError(`expected a number index, got a ${index.kind}`)
+            }
+            rt.stack.push(array.value[index.value])
+        },
+    },
+    set: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let [value, index, array] = rt.stack.splice(-3, 3)
+            if (index.kind !== "number") {
+                throw TypeError(`expected a number index, got a ${index.kind}`)
+            }
+            array.value[index.value] = value
+        },
+    },
+}
+
+export let objectMethodMap: BroccoliFrame["data"] = {
+    get: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let [key, obj] = rt.stack.splice(-2, 2)
+            rt.stack.push(obj.value[key.value])
+        },
+    },
+    set: {
+        kind: "nativefunction",
+        value: (rt, frame) => {
+            let [value, key, obj] = rt.stack.splice(-3, 3)
+            obj.value[key.value] = value
+        },
+    },
+}
+
+/**
+ * Run the given broccoli code, possibly inside a new frame
+ * @param program
+ * @param runtime
+ * @param frame
+ * @param createNewFrame
+ */
 function runProgram(
     program: BroccoliTreeProgram,
     runtime: BroccoliRuntime,
@@ -203,6 +303,13 @@ function runProgram(
     })
 }
 
+/**
+ * Execute the given expression according to its kind
+ *
+ * @param expression The expression to run
+ * @param runtime The runtime
+ * @param frame The current frame
+ */
 function runExpression(
     expression: BroccoliTreeExpression,
     runtime: BroccoliRuntime,
@@ -216,10 +323,19 @@ function runExpression(
             previous = stack.pop()!
             if (previous.kind === "native") {
                 entry = previous.value.data[expression.name]
-                runEntry(entry, runtime, frame)
+            } else if (previous.kind === "array") {
+                entry = arrayMethodMap[expression.name]
+                stack.push(previous)
+            } else if (previous.kind === "object") {
+                entry = objectMethodMap[expression.name]
+                stack.push(previous)
             } else {
                 throw new Error("unhandled access case")
             }
+            if (entry === undefined) {
+                throw new ReferenceError(`unrecognized identifier ${expression.name}`)
+            }
+            runEntry(entry, runtime, frame)
             break
         case "assignment":
             frame.data[expression.target] = stack.pop()!
@@ -239,7 +355,7 @@ function runExpression(
             break
         case "identifier":
             let { name } = expression
-            entry = frameLookup(frame, name, `unrecognized identifier ${name}`)
+            entry = frameLookup(frame, name)
             runEntry(entry, runtime, frame)
             break
         case "operation":
@@ -252,6 +368,14 @@ function runExpression(
     }
 }
 
+/**
+ * runEntry performs the action related to the given entry, be it running a
+ * function or just adding it as a value to the stack.
+ *
+ * @param entry The entry to run
+ * @param runtime The runtime context
+ * @param frame The current frame
+ */
 function runEntry(entry: BroccoliValue, runtime: BroccoliRuntime, frame: BroccoliFrame) {
     if (entry.kind === "function") {
         runProgram(entry.value, runtime, frame, true)
@@ -262,7 +386,7 @@ function runEntry(entry: BroccoliValue, runtime: BroccoliRuntime, frame: Broccol
     }
 }
 
-function frameLookup(initialFrame: BroccoliFrame, name: string, error: string): BroccoliValue {
+function frameLookup(initialFrame: BroccoliFrame, name: string): BroccoliValue {
     let frame = initialFrame
     let result = frame.data[name]
     let k = 0
@@ -276,7 +400,7 @@ function frameLookup(initialFrame: BroccoliFrame, name: string, error: string): 
         if (k >= recursionLimit) {
             throw new Error("too much codeblock recursion")
         } else {
-            throw new ReferenceError(error)
+            throw new ReferenceError(`unrecognized identifier ${name}`)
         }
     }
     return result
