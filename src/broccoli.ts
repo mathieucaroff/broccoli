@@ -205,9 +205,31 @@ export let predefinedFrame: BroccoliFrame = {
                 }
             },
         },
-        // TODO:
-        // toJson: {}
-        // fromJson: {}
+        toJson: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let entry = rt.stack.pop()!
+                rt.stack.push({
+                    kind: "string",
+                    value: JSON.stringify(entry, (k, v) => v.value),
+                })
+            },
+        },
+        fromJson: {
+            kind: "nativefunction",
+            value: (rt, frame) => {
+                let body = rt.stack.pop()!
+                if (body.kind !== "string") {
+                    throw new TypeError(`fromJson expected a string but it got a ${body.kind}`)
+                }
+                rt.stack.push(
+                    JSON.parse(body.value, (k, v) => ({
+                        kind: Array.isArray(v) ? "array" : typeof v,
+                        value: v,
+                    })),
+                )
+            },
+        },
     },
 }
 
