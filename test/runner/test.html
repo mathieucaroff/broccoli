@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>Broccoli language parser testing</title>
+    <style>
+        .bodyPre {
+            font-size: x-large;
+        }
+    </style>
+</head>
+
+<body>
+    <pre class="bodyPre">*waiting for test result...*</pre>
+    <script type="module">
+        import { runTest } from "./test.ts"
+
+        let bodyPre = document.getElementsByClassName("bodyPre")[0]
+        bodyPre.innerText = runTest()
+    </script>
+</body>
+
+</html>

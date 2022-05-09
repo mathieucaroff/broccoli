@@ -4,41 +4,36 @@ content:
     input:
       program: '"Hello World!" output'
       stdin: ""
-      output: Hello World!
+      output: "Hello World!\n"
   - name: addition
     input:
       program: "2 + 2 output"
       stdin: ""
-      output: "4"
+      output: "4\n"
   - name: cat
     input:
-      program: "{ input output } loop"
+      program: "stdin .read stdout .write"
       stdin: |
         abcd
         ef1234
       output: |
         abcd
         ef1234
-  - name: reverse cat
-    input:
-      program: stdin .read .reverse output
-      stdin: |
-        abc
-        def
-        123
-      output: "\n321\nfed\ncba"
   - name: truth machine
     input:
-      program: "{ 0 output } { { 1 output } loop } input == "0" if"
+      program: "{ 0 output } { { 1 output } loop } input == \"0\" if"
       stdin: "0"
-      output: "0"
+      output: |
+        0
   - name: self interpreter
     input:
-      program: stdin .read eval
+      program: stdin .read eval output
       stdin: "3 + 3"
-      output: "6"
+      output: |
+        6
   - name: factorial
     input:
       program: "input number = a 1 = b { a * b = b a - 1 = a } { a > 0 } while b output"
       stdin: "6"
-      output: "720"
+      output: |
+        720

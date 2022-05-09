@@ -16,10 +16,12 @@
     "nearley": "^2.20.1"
   },
   "devDependencies": {
-    "@parcel/transformer-yaml": "^2.3.2",
+    "@parcel/transformer-inline-string": "2.3.2",
+    "@parcel/transformer-yaml": "2.3.2",
     "@types/nearley": "^2.11.2",
     "parcel": "^2.3.2",
     "parcel-transformer-nearley": "^1.0.4",
+    "specimen-test": "^0.1.0",
     "typescript": "^4.6.2"
   }
 }
