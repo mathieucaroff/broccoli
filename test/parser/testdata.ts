@@ -1,5 +1,5 @@
-import { BroccoliTreeProgram, BroccoliValue } from "../../src/type"
-import { success, failure, Case } from "../lib/languageTestEngine"
+import { BroccoliTreeProgram } from "../../src/type"
+import { success, failure, Case } from "./languageTestEngine"
 
 let litteralString = (value: string) => ({
     kind: "litteral",

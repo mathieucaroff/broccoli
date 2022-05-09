@@ -1,4 +1,4 @@
-import { deepEqual } from "./deepEqual"
+import { deepEqual } from "../lib/deepEqual"
 
 export interface SuccessCase<TI, TO> {
     input: TI
