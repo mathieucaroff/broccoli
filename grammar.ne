@@ -44,7 +44,7 @@ codeblock -> braced[_ program _] {% ([[, [, program]]]) => ({ kind: "litteral", 
 
 group -> parenthesized[_ program _] {% ([[, [, program]]])=> ({ kind: "group", program }) %}
 
-_  -> [ \t\n]:* (comment [ \t\n]:*):?
-__ -> [ \t\n]:+ (comment [ \t\n]:*):?
+_  -> [ \t\n]:* (comment [ \t\n]:*):*
+__ -> [ \t\n]:+ (comment [ \t\n]:*):* | (comment [ \t\n]:*):+
 
 comment -> "#" .:* "\n"

@@ -2,7 +2,8 @@
 
 test -> test_ {% ([[, content]]) => content %}
 
-test_ -> "p" program
+test_ -> "m" main
+ | "p" program
  | "e" expression
  | "i" identifier
  | "s" string

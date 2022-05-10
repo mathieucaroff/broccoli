@@ -40,8 +40,11 @@ function update() {
         createBroccoli(program.value, (v) => (stdout.innerText += v)).run(stdin.value)
     } catch (error) {
         let errorText = "" + error
+        let errorSet: Set<string>
         if (errorText.startsWith("Error: Syntax error at line ")) {
             errorText = errorText.replace(/ based on:(\n    .*)+/g, "")
+            errorSet = new Set(errorText.split("\n"))
+            errorText = Array.from(errorSet).join("\n")
         }
         stderr.innerText = errorText
     }

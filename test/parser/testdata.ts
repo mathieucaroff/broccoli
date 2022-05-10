@@ -37,6 +37,7 @@ export let caseArray: Case<string, any>[] = [
         { kind: "identifier", name: "b" },
         { kind: "identifier", name: "c" },
     ]),
+    success("m#\n#", []),
     success("eidentifier89_", { kind: "identifier", name: "identifier89_" }),
     success("e.propertyname", { kind: "access", name: "propertyname" }),
     success('e"abc"', litteralString("abc")),

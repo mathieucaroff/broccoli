@@ -67,14 +67,15 @@ export let exampleObject = {
     ],
     "Create and manipulate objects and arrays": [
         dedent`
-        # find all the methods available at: https://github.com/mathieucaroff/broccoli/blob/743cad0168fcd6c32736497278607dc7e088720d/src/broccoli.ts#L236
+        # find all the methods available at:
+        # https://github.com/mathieucaroff/broccoli/blob/743cad01/src/broccoli.ts#L236
         array = a
         0 a .push
         10 a .push
         20 a .push
         a toJson output
 
-        object = b # 
+        object = b
         2 "foo" b .set
         4 "bar" b .set
         b toJson output

@@ -136,7 +136,7 @@ codeblock -> braced[_ program _]
 group -> parenthesized[_ program _]
 
 _  -> [ \t\n]:* (comment [ \t\n]:*):?
-__ -> [ \t\n]:+ (comment [ \t\n]:*):?
+__ -> [ \t\n]:+ (comment [ \t\n]:*):* | (comment [ \t\n]:*):+
 
 comment -> "#" .:* "\n"
 ```
